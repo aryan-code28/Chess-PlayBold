@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#321e16">
+  <title>CHESS — PLAY BOLD</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main id="app">
+    <section id="auth-screen" class="auth-screen">
+      <div class="auth-card">
+        <div class="crown">♔</div>
+        <div class="brand">CHESS</div>
+        <div class="tagline">PLAY BOLD</div>
+        <p class="muted auth-subtitle">A classic game. Your next great move.</p>
+        <form id="login-form" class="auth-form">
+          <label for="login-username">USERNAME</label>
+          <input id="login-username" autocomplete="username" placeholder="Enter username" required>
+          <label for="login-password">PASSWORD</label>
+          <input id="login-password" type="password" autocomplete="current-password" placeholder="Enter password" required>
+          <button class="btn btn-gold" type="submit">LOGIN</button>
+          <button class="btn btn-outline" id="show-register" type="button">CREATE NEW ACCOUNT</button>
+          <p id="login-message" class="message" aria-live="polite"></p>
+        </form>
+        <form id="register-form" class="auth-form hidden">
+          <h2>Create account</h2>
+          <label for="register-username">USERNAME</label>
+          <input id="register-username" autocomplete="username" placeholder="Choose username (3+ characters)" required minlength="3">
+          <label for="register-password">PASSWORD</label>
+          <input id="register-password" type="password" autocomplete="new-password" placeholder="Minimum 6 characters" required minlength="6">
+          <button class="btn btn-gold" type="submit">CREATE ACCOUNT</button>
+          <button class="btn btn-outline" id="show-login" type="button">BACK TO LOGIN</button>
+          <p id="register-message" class="message" aria-live="polite"></p>
+        </form>
+        <p class="local-note">Personal demo account · saved in this browser</p>
+      </div>
+    </section>
+
+    <section id="home-screen" class="screen hidden">
+      <header class="topbar">
+        <div class="mini-brand"><span>♔</span> CHESS <small>PLAY BOLD</small></div>
+        <div class="user-actions"><span id="home-greeting"></span><button class="btn btn-small btn-outline" id="logout-home">LOGOUT</button></div>
+      </header>
+      <div class="home-content">
+        <div class="hero-crown">♔</div>
+        <div class="brand hero-title">CHESS</div>
+        <div class="tagline">PLAY BOLD</div>
+        <p class="muted">Every move tells a story. Make yours count.</p>
+        <div class="mode-grid">
+          <button id="play-bot" class="mode-card featured"><span class="mode-icon">♟</span><strong>PLAY WITH BOT</strong><small>Challenge the computer</small><span class="arrow">↗</span></button>
+          <button id="play-person" class="mode-card"><span class="mode-icon">♟♙</span><strong>PLAY IN PERSON</strong><small>Two players, one board</small><span class="arrow">↗</span></button>
+        </div>
+        <div class="stats-grid">
+          <div class="stat"><span>🏆</span><strong id="home-wins">0</strong><small>WINS</small></div>
+          <div class="stat"><span>✕</span><strong id="home-losses">0</strong><small>LOSSES</small></div>
+          <div class="stat"><span>🤝</span><strong id="home-draws">0</strong><small>DRAWS</small></div>
+        </div>
+        <div class="home-controls">
+          <button id="open-settings" class="btn btn-purple">⚙ SETTINGS</button>
+          <button id="toggle-sound-home" class="btn btn-outline">🔊 SOUND ON</button>
+        </div>
+        <p class="muted tiny">Classic rules · Legal move hints · Three board themes</p>
+      </div>
+    </section>
+
+    <section id="game-screen" class="screen hidden">
+      <header class="topbar game-topbar">
+        <button id="back-home" class="btn btn-small btn-outline">← HOME</button>
+        <div class="mini-brand"><span>♔</span> CHESS <small>PLAY BOLD</small></div>
+        <button id="logout-game" class="btn btn-small btn-outline">LOGOUT</button>
+      </header>
+      <div class="game-layout">
+        <aside class="game-sidebar">
+          <div class="sidebar-heading">YOUR MATCH</div>
+          <div class="player-chip"><span class="avatar">♙</span><div><small>PLAYER</small><strong id="game-username">Player</strong></div></div>
+          <div class="mode-label" id="game-mode">🤖 VS BOT</div>
+          <div class="score-panel">
+            <div><span>WINS</span><strong id="game-wins">0</strong></div>
+            <div><span>LOSSES</span><strong id="game-losses">0</strong></div>
+            <div><span>DRAWS</span><strong id="game-draws">0</strong></div>
+          </div>
+          <button id="new-game" class="btn btn-gold">↻ NEW GAME</button>
+          <button id="game-settings" class="btn btn-outline">⚙ SETTINGS</button>
+          <button id="toggle-sound-game" class="btn btn-outline">🔊 SOUND ON</button>
+          <div class="sidebar-tip"><span>✦</span><strong>TIP</strong><p>Tap a piece to see its legal moves, then tap a highlighted square.</p></div>
+        </aside>
+        <section class="board-section">
+          <div class="board-topline"><span id="opponent-label">🤖 COMPUTER</span><span id="turn-indicator">WHITE TO MOVE</span></div>
+          <div id="chessboard" class="chessboard" role="grid" aria-label="Chessboard"></div>
+          <div class="board-status"><span class="status-dot"></span><span id="status-text">Select a piece to begin.</span></div>
+          <div class="board-actions">
+            <button id="undo-move" class="btn btn-outline">↶ UNDO</button>
+            <button id="flip-board" class="btn btn-outline">⇅ FLIP BOARD</button>
+            <button id="resign-game" class="btn btn-danger">RESIGN</button>
+          </div>
+          <details class="move-details"><summary>MOVE HISTORY</summary><ol id="move-history"></ol></details>
+        </section>
+        <aside class="right-panel">
+          <div class="panel-card">
+            <span class="eyebrow">PLAY BOLD</span><h2>Think ahead.</h2>
+            <p>Control the centre, protect your king, and look for the next opportunity.</p>
+            <div class="rule-row"><span>♔</span><div><strong>Check</strong><small>King under attack</small></div></div>
+            <div class="rule-row"><span>♕</span><div><strong>Checkmate</strong><small>Game over — no escape</small></div></div>
+            <div class="rule-row"><span>½</span><div><strong>Draw</strong><small>Neither side wins</small></div></div>
+          </div>
+          <div class="panel-card theme-preview">
+            <span class="eyebrow">YOUR STYLE</span><h3 id="theme-name">Black & White</h3>
+            <div class="theme-swatches"><span></span><span></span><span></span><span></span></div>
+            <button id="quick-theme" class="text-button">Change board theme ↗</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="settings-dialog" class="dialog">
+    <form method="dialog" class="dialog-close-row"><button class="icon-button" aria-label="Close">✕</button></form>
+    <div class="dialog-crown">⚙</div><h2>SETTINGS</h2><p class="tagline">PROFILE & GAME SETTINGS</p>
+    <div class="profile-box"><span class="eyebrow">YOUR PROFILE</span><strong id="settings-username">Player</strong><small id="settings-stats">Wins 0 · Losses 0 · Draws 0</small></div>
+    <label for="new-username">CHANGE USERNAME</label><div class="inline-field"><input id="new-username" placeholder="New username"><button id="save-username" class="btn btn-gold">SAVE</button></div>
+    <label for="current-password">CHANGE PASSWORD</label><input id="current-password" type="password" placeholder="Current password">
+    <input id="new-password" type="password" placeholder="New password (6+ characters)">
+    <input id="confirm-password" type="password" placeholder="Confirm new password">
+    <button id="save-password" class="btn btn-outline">UPDATE PASSWORD</button>
+    <label for="board-theme">BOARD THEME</label>
+    <select id="board-theme"><option>Black & White</option><option>Red & Cream</option><option>Lavender & Purple</option></select>
+    <button id="settings-sound" class="btn btn-purple">🔊 SOUND: ON</button>
+    <p id="settings-message" class="message" aria-live="polite"></p>
+    <button id="settings-done" class="btn btn-gold">DONE</button>
+  </dialog>
+
+  <dialog id="result-dialog" class="dialog result-dialog">
+    <div class="dialog-crown" id="result-icon">♔</div><h2 id="result-title">CHECKMATE!</h2><p id="result-description">You won the match.</p>
+    <button id="result-home" class="btn btn-gold">BACK TO HOME</button>
+    <button id="result-again" class="btn btn-outline">PLAY AGAIN</button>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
